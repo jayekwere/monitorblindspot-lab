@@ -124,6 +124,10 @@ def evaluate(config: Experiment, model: Model | None = None) -> RunRecord:
         summary=summary,
         analysis={
             "unique_cases": len(selected),
+            "provider_usage": model.usage.model_dump() if model else {},
+            "provider_parameters": model.config.model_dump()
+            if model is not None and hasattr(model, "config")
+            else {},
             "interval_unit": "first predeclared trial; Wilson intervals over unique scenarios; repeated trials reported separately",
             "by_length": by_length,
             "by_category": by_category,

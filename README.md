@@ -55,7 +55,7 @@ These observations validate the experimental machinery and expose synthetic blin
 
 Python 3.12+, Pydantic, FastAPI, HTTPX and Uvicorn; dependency-free browser JavaScript. Research logic is separate from the local application. External adapters are opt-in and constrained by request/token/spend reservations, response limits and shared retry deadlines. The web console cannot call external models. Keep the single-user server on loopback.
 
-- [Architecture](docs/architecture.md) · [Methodology](docs/methodology.md) · [Dataset](data/README.md)
+- [Technical review](docs/technical-review.md) · [Architecture](docs/architecture.md) · [Methodology](docs/methodology.md) · [Dataset](data/README.md)
 - [Reproduction, CLI/API, optional models and containers](docs/reproduction.md)
 - [Results](docs/results.md) · [Verification](docs/verification.md) · [Release notes](docs/release-notes.md)
 - [Threat model](docs/threat-model.md) · [Security](SECURITY.md) · [Dependencies/assets](docs/dependencies.md)

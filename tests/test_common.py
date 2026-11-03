@@ -138,6 +138,9 @@ def test_adapter_retries_errors_limits_and_redaction(monkeypatch: pytest.MonkeyP
     for code, body in [
         (400, {"secret": "must not echo"}),  # pragma: allowlist secret - synthetic redaction sentinel
         (200, {}),
+        (200, None),
+        (200, []),
+        (200, {"usage": []}),
         (200, response(answer=[])),
         (200, {"usage": {"input_tokens": -1}}),
         (200, {"usage": {"input_tokens": "x"}}),
@@ -150,7 +153,7 @@ def test_adapter_retries_errors_limits_and_redaction(monkeypatch: pytest.MonkeyP
         model.complete("x", {})
     assert model.usage.requests == 3
     with pytest.raises(ProviderError, match="input exceeds"):
-        HTTPModel(provider_config()).complete("x" * 131073, {})
+        HTTPModel(provider_config()).complete("x" * 1048577, {})
     model = HTTPModel(
         provider_config(), httpx.MockTransport(lambda request: httpx.Response(200, content=b"x" * 262145))
     )
@@ -223,3 +226,24 @@ def test_cli_dataset_run_validation_and_serve(
     cli.main()
     assert calls[0]["host"] == "127.0.0.1"
     assert "invalid configuration" in capsys.readouterr().err
+
+
+def test_export_neutralizes_spreadsheet_formulas(monkeypatch: pytest.MonkeyPatch) -> None:
+    from monitorblindspot import web
+    from monitorblindspot.core import RunRecord
+
+    record = RunRecord(
+        project="test",
+        mode="deterministic-simulation",
+        dataset_sha256="x",
+        config_sha256="y",
+        config={},
+        providers=[],
+        rows=[{"id": "synthetic", "reason": "  =1+1"}],
+        summary=[],
+    )
+    monkeypatch.setattr(web, "evaluate", lambda cfg: record)
+    client = TestClient(web.create_app())
+    run_id = client.post("/api/runs", json={}).json()["id"]
+    exported = client.get(f"/api/runs/{run_id}/export?format=csv")
+    assert "'  =1+1" in exported.text

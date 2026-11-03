@@ -1,0 +1,11 @@
+{
+  "repository": "monitorblindspot-lab",
+  "mode": "deterministic-simulation",
+  "rows": 648,
+  "dataset_sha256": "7cc68e0098bfaf0bd5844808c7b66b5119ae08bedf7e222a423fe85314c94703",
+  "source_sha256": "b599393f62b8f7c35a997e44dad205e97c35a82202fe14a30e252a07a0584c7d",
+  "clean_wheel_install": true,
+  "hashed_runtime_install": true,
+  "exact_observations_reproduced": true,
+  "installed_dashboard_api": true
+}

@@ -65,7 +65,14 @@ def main() -> None:
 
             if not 1024 <= args.port <= 65535:
                 raise ValueError("port must be between 1024 and 65535")
-            uvicorn.run("monitorblindspot.web:app", host="127.0.0.1", port=args.port, log_level="warning")
+            uvicorn.run(
+                "monitorblindspot.web:app",
+                host="127.0.0.1",
+                port=args.port,
+                log_level="warning",
+                limit_concurrency=32,
+                timeout_keep_alive=5,
+            )
     except (ValueError, OSError) as exc:
         print(
             json.dumps(

@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 import os
+import platform
 import re
 import tempfile
 from pathlib import Path
@@ -29,6 +30,16 @@ class Experiment(StrictModel):
 
 class RunRecord(StrictModel):
     schema_version: str = "1.0"
+    metadata: dict[str, Any] = Field(
+        default_factory=lambda: {
+            "software_version": "0.1.0",
+            "python_version": platform.python_version(),
+            "dataset_version": "1",
+            "source_sha256": hashlib.sha256(
+                b"".join(p.name.encode() + p.read_bytes() for p in sorted(Path(__file__).parent.glob("*.py")))
+            ).hexdigest(),
+        }
+    )
     project: str
     mode: str
     dataset_sha256: str

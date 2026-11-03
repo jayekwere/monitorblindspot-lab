@@ -16,6 +16,16 @@ patterns = [
     r"-----BEGIN " + r"(?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
 ]
 findings = []
+forbidden_terms = (
+    "em" + "ployer",
+    "recrui" + "ting",
+    "recrui" + "tment",
+    "inter" + "view",
+    "job appli" + "cation",
+    "career moti" + "vation",
+    "resi" + "dency",
+)
+
 for name in filter(None, paths):
     path = Path(name)
     if not path.is_file():
@@ -24,6 +34,8 @@ for name in filter(None, paths):
     for pattern in patterns:
         if re.search(pattern, content):
             findings.append(name)
+    if any(re.search(r"\b" + re.escape(term) + r"s?\b", content, re.IGNORECASE) for term in forbidden_terms):
+        findings.append(f"forbidden content: {name}")
     if path.suffix == ".md":
         for link in re.findall(r"\]\(([^ )]+)\)", content):
             if ":" in link or link.startswith("#"):

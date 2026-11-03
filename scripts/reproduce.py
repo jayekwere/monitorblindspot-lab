@@ -18,5 +18,6 @@ def observations(value: dict) -> list:
 
 assert observations(saved) == observations(fresh), "deterministic observations drifted"
 assert fresh["dataset_sha256"] == saved["dataset_sha256"], "dataset drifted"
+assert fresh["metadata"]["source_sha256"] == saved["metadata"]["source_sha256"], "source drifted"
 write_json(Path("runs/reproduced.json"), fresh)
 print(json.dumps({"reproduced": True, "rows": len(fresh["rows"]), "dataset_sha256": fresh["dataset_sha256"]}))

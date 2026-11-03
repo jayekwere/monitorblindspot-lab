@@ -106,11 +106,11 @@ class HTTPModel:
         self.usage.reserved_usd += cost
 
     def complete(self, prompt: str, schema: dict[str, Any]) -> dict[str, Any]:
-        if len(prompt.encode()) > 131072:
+        if len(prompt.encode()) > 1048576:
             raise ProviderError("input exceeds adapter limit")
         cfg = self.config
         schema = strict_schema(schema)
-        headers = {"content-type": "application/json"}
+        headers = {"content-type": "application/json", "accept-encoding": "identity"}
         if cfg.kind == "anthropic":
             key = os.getenv("ANTHROPIC_API_KEY", "")
             headers.update({"x-api-key": key, "anthropic-version": "2023-06-01"})
@@ -162,6 +162,8 @@ class HTTPModel:
                         raise httpx.TransportError("transient upstream status")
                     if response.status_code != 200:
                         raise ProviderError("provider rejected the request")
+                    if response.headers.get("content-encoding", "identity") != "identity":
+                        raise ProviderError("compressed provider responses are not accepted")
                     raw = bytearray()
                     for chunk in response.iter_bytes():
                         raw.extend(chunk)
@@ -199,6 +201,6 @@ class HTTPModel:
             except httpx.TransportError:
                 if attempt == cfg.retries:
                     raise ProviderError("provider unavailable after bounded retries") from None
-            except (KeyError, IndexError, TypeError, ValueError):
+            except (KeyError, IndexError, TypeError, ValueError, AttributeError):
                 raise ProviderError("invalid structured provider response") from None
         raise ProviderError("unreachable provider state")

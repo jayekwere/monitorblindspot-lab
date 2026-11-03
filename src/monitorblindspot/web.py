@@ -43,7 +43,9 @@ def create_app() -> FastAPI:
             if origin and origin != f"{request.url.scheme}://{request.headers.get('host', '')}":
                 return Response("origin denied", status_code=403)
             token = os.getenv("LAB_API_TOKEN", "")
-            if token and not hmac.compare_digest(request.headers.get("authorization", ""), f"Bearer {token}"):
+            if token and not hmac.compare_digest(
+                request.headers.get("authorization", "").encode(), f"Bearer {token}".encode()
+            ):
                 return Response("authorization required", status_code=401)
             length = request.headers.get("content-length", "")
             if not length.isdigit() or int(length) > 16384:
@@ -123,7 +125,8 @@ def create_app() -> FastAPI:
                 {
                     k: (
                         "'" + str(v)
-                        if isinstance(v, str) and v.startswith(("=", "+", "-", "@", "\t", "\r"))
+                        if isinstance(v, str)
+                        and (v.lstrip().startswith(("=", "+", "-", "@")) or v.startswith(("\t", "\r", "\n")))
                         else v
                     )
                     for k, v in row.items()
