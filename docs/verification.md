@@ -11,3 +11,7 @@ The running dashboard was inspected at the desktop breakpoint, including actual 
 Python 3.12.16: 22 pytest tests passed; 95.93% branch-inclusive core coverage. Three Node dashboard tests passed. Ruff, strict mypy and Bandit passed. Saved observations and source fingerprints reproduced. The single TestClient deprecation warning is retained; it does not affect the passing assertions. GitHub Actions verifies the final published commit separately.
 
 Fresh wheel installation verified hashed runtime dependencies, exact experiment observations and source fingerprints, plus the installed dashboard/API. See [installation evidence](../results/installation-verification.json). Mobile layout checks observed a 375 px content viewport with no horizontal page overflow; desktop checks used the 1440×1000 breakpoint. Long scenario JSON loads on demand to keep filtering responsive.
+
+## v0.1.1 security patch verification
+
+Python 3.12.16: 32 pytest tests passed with 96.82% branch-inclusive coverage. All ten new provider JSON regression tests passed; the excessive-nesting test failed against the original implementation. Three Node dashboard tests, Ruff lint/format, strict mypy and Bandit passed. A fresh read-only reviewer found no concrete surviving bypass or regression in the patch. The existing TestClient deprecation warning remains visible. See [audit scope and remediation](security-audit.md).

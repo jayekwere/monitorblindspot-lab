@@ -62,3 +62,5 @@ Python 3.12+, Pydantic, FastAPI, HTTPX and Uvicorn; dependency-free browser Java
 - [Contributing](CONTRIBUTING.md) · [Conduct](CODE_OF_CONDUCT.md) · [Changelog](CHANGELOG.md)
 
 Apache-2.0. An independent open-source AI safety research initiative.
+
+Native security audit: [v0.1.1 finding, remediation and scope](docs/security-audit.md).
